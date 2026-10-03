@@ -90,7 +90,7 @@
     const next = stages.find(s => !TR.stageState(s.id).done) || stages[0];
     view.innerHTML = `<div class="wrap">
       <section class="hero">
-        <div class="eyebrow">Интерактивный кейс школы AMP · 4 недели · ${stages.length} тренировок</div>
+        <div class="eyebrow">Интерактивный кейс · 4 недели · ${stages.length} тренировок</div>
         <h1>Сеть «Пульс» растёт.<br>Данные и интеграции — <em>ваши</em>.</h1>
         <svg class="ecg" viewBox="0 0 1000 56" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="ecgGrad" x1="0" x2="1"><stop offset="0" stop-color="#6ee7ff"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#f0abfc"/></linearGradient></defs>
           <path d="M0 30 H170 L182 30 L190 18 L198 30 H260 L272 6 L284 52 L296 30 H420 L430 22 L440 30 H560 L572 4 L586 54 L598 30 H700 L710 20 L720 30 H840 L852 8 L864 50 L876 30 H1000"/></svg>
@@ -396,7 +396,7 @@
   function reportMd() {
     const S = TR.S(), stages = TR.stages();
     const L = [];
-    L.push(`# Отчёт по тренажёру «AMP Пульс»`, '');
+    L.push(`# Отчёт по тренажёру «Пульс»`, '');
     L.push(`- Студент: ${S.name || '—'}${S.group ? ' · ' + S.group : ''}`);
     L.push(`- Дата: ${new Date().toLocaleString('ru-RU')}`);
     L.push(`- Доверие команды: ${S.trust} из 100 · опыт: ${S.xp}`);

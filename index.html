@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AMP Пульс</title>
-<meta name="description" content="Тренажёр школы AMP: с нуля проектируете данные и интеграции сети фитнес-клубов — вопросы заказчику, модель БД, репликация, REST, GraphQL, gRPC, узкие места.">
+<title>Тренажёр «Пульс»</title>
+<meta name="description" content="Тренажёр для системных аналитиков: с нуля проектируете данные и интеграции сети фитнес-клубов — вопросы заказчику, модель БД, репликация, REST, GraphQL, gRPC, узкие места.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
-/* Layout: стиль школы AMP. Шапка с пульсом доверия, слева программа из 4 недель (как расписание клуба), в центре текущая тренировка: подходы по очереди, справа выезжает блокнот требований. */
+/* Layout: тёмная тема с градиентным акцентом. Шапка с пульсом доверия, слева программа из 4 недель (как расписание клуба), в центре текущая тренировка: подходы по очереди, справа выезжает блокнот требований. */
 :root {
   --bg: #0b0f14; --surface: #141a22; --surface-2: #1b232d; --surface-3: #232d39;
   --border: #263140; --border-strong: #3a4757;
@@ -105,7 +105,7 @@ b, strong { font-weight: 600; color: var(--text); }
 .brand svg { width: 30px; height: 30px; flex: none; }
 .brand .wm { font: 700 18px/1 var(--f-brand); letter-spacing: .5px; }
 .brand .wm i { font-style: normal; color: #6ee7ff; }
-.brand .prod { display: grid; padding-left: 10px; border-left: 1px solid var(--border-strong); line-height: 1.2; }
+.brand .prod { display: grid; line-height: 1.2; }
 .brand .prod b { font: 600 15px/1.2 var(--f-brand); }
 .brand .prod small { color: var(--text-muted); font-size: 12px; }
 .hud { margin-left: auto; display: flex; align-items: center; gap: 16px; min-width: 0; }
@@ -487,8 +487,7 @@ svg text { font-family: var(--f-body); }
   <header class="topbar">
     <button class="tb-btn menu-btn" type="button" id="menuBtn" aria-label="Программа">☰</button>
     <button class="brand" type="button" id="homeBtn" aria-label="На обложку">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6ee7ff"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#f0abfc"/></linearGradient></defs><rect width="32" height="32" rx="8" fill="url(#lg)"/><path d="M9 23 L16 8 L23 23 M12 18 H20" stroke="#0b0f14" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="24.5" y="17" width="2" height="6" rx="1" fill="#0b0f14"/><rect x="27.5" y="13" width="2" height="10" rx="1" fill="#0b0f14" opacity=".6"/></svg>
-      <span class="wm">AMP<i>.</i></span>
+      <svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6ee7ff"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#f0abfc"/></linearGradient></defs><rect width="32" height="32" rx="8" fill="url(#lg)"/><path d="M5 17 H11 L13.5 11 L17 23 L20 14 L21.5 17 H27" stroke="#0b0f14" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <span class="prod"><b>Пульс</b><small>тренажёр данных и интеграций</small></span>
     </button>
     <div class="hud">

@@ -358,7 +358,7 @@
       const out = TR.$('[data-jout]', el);
       out.innerHTML = `<div class="note"><div class="ttl">Вера читает</div><div class="row"><span class="typing"><i></i><i></i><i></i></span><button class="btn xs" type="button" data-j="stop">Стоп</button></div></div>`;
       b.disabled = true;
-      const prompt = `Ты — Вера, ведущий системный аналитик и наставник в школе AMP. Студент проходит тренажёр по кейсу сети фитнес-клубов «Пульс» и письменно обосновывает решение.
+      const prompt = `Ты — Вера, ведущий системный аналитик и наставник на курсе системных аналитиков. Студент проходит тренажёр по кейсу сети фитнес-клубов «Пульс» и письменно обосновывает решение.
 Вопрос студенту: ${cfg.qPlain || String(cfg.q || '').replace(/<[^>]+>/g, '')}
 Критерии хорошего ответа:
 ${(cfg.rubric || []).map((r, i) => (i + 1) + '. ' + String(r).replace(/<[^>]+>/g, '')).join('\n')}
