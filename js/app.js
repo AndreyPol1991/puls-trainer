@@ -44,7 +44,7 @@
       list.forEach(s => {
         const p = TR.stageProgress(s.id), st = TR.stageState(s.id);
         const cls = st.done ? 'done' : p.done ? 'part' : '';
-        h += `<button type="button" class="rt ${cls}" data-go="${esc(s.id)}" aria-current="${current === s.id}"><span class="slot">${esc(s.slot || '')}</span><span class="t">${esc(s.title)}</span><span class="st" aria-label="${st.done ? 'пройдено' : p.done ? 'начато' : 'не начато'}"></span></button>`;
+        h += `<button type="button" class="rt ${cls}" data-go="${esc(s.id)}" aria-current="${current === s.id}"><span class="slot">${esc(s.slot || '')}</span><span class="t">${esc(s.title)}${profMark(s.id)}</span><span class="st" aria-label="${st.done ? 'пройдено' : p.done ? 'начато' : 'не начато'}"></span></button>`;
       });
     });
     h += `<div class="foot"><button type="button" class="btn sm ghost" data-go="">← Обложка и легенда</button><button type="button" class="btn sm danger" data-reset-all>⟲ Сбросить всё и начать с нуля</button>${TR.teacher() ? '<span class="chip warn">Режим преподавателя</span>' : ''}</div>`;
@@ -254,6 +254,9 @@
       let r;
       try { r = t.check(TR.clone(ts.ans), ctx) || { ok: false, score: 0 }; } catch (e) { console.error(e); r = { ok: false, score: 0, summary: 'Проверка споткнулась: ' + esc(e.message) }; }
       if (r.score == null) r.score = r.ok ? 1 : 0;
+      // неверные проверки до первого успеха — для зачёта на платформе (у старого прогресса считаем по попыткам)
+      if (ts.miss == null) ts.miss = Math.max(0, (ts.attempts || 0) - (ts.ok ? 1 : 0));
+      if (!r.ok && !ts.ok) ts.miss++;
       ts.attempts++;
       ts.best = Math.max(ts.best || 0, r.score);
       if (r.ok && !ts.ok) {
@@ -306,6 +309,7 @@
         ts.ans = TR.clone(t.blank()); lastResult = null; fb.innerHTML = ''; TR.save(); render();
       }
       if (a === 'ref') {
+        if (!ts.ok && !refOpen) ts.peek = true;   // эталон до решения: на платформу такое задание не засчитывается
         if (!ts.revealed && !ts.ok && !TR.teacher() && !refOpen) {
           ts.revealed = true; TR.score(-3, 0, 'подсмотрели эталон');
           const wasDone = ts.done; ts.done = true; TR.save();
@@ -342,6 +346,7 @@
     const stages = TR.stages(), next = stages[stages.indexOf(def) + 1], p = TR.stageProgress(def.id);
     box.innerHTML = `<div class="outro"><div class="eyebrow">Тренировка пройдена · точность ${Math.round(p.score * 100)}%</div>
       ${def.outro ? ui.say('vera', def.outro) : ''}
+      ${profNote(def.id)}
       ${next ? `<div><button type="button" class="btn primary" data-nav="${esc(next.id)}">Следующая: ${esc(next.title)} →</button></div>` : ''}</div>`;
   }
 
@@ -464,6 +469,66 @@
     });
   });
 
+  // ---------- платформа ampschool.ru: зачёт тренировок в профиль навыков (протокол trainer/1) ----------
+  // Тренажёр открыт в рамке платформы → шлём ready, платформа отвечает hello со списком уже зачтённого.
+  // Задание платформы = тренировка целиком, код задания = id тренировки. Тренировка решена, когда каждое
+  // задание практики засчитано и эталон не открывали до решения (теория в зачёт не входит).
+  // attempts = 1 + неверные проверки по заданиям тренировки (не больше 99); hints = 0 — лестницы подсказок нет.
+  // solved уходит в момент, когда тренировка становится решённой, и один раз после hello — за решённое
+  // вне платформы, если платформа его ещё не зачла. Без hello мост молчит и ничего не показывает.
+  const PLATFORM = { protocol: 'trainer/1', trainer: 'puls', embedded: window.parent !== window, target: '*', hello: false, accepted: new Set(), sent: new Set() };
+  function platformSend(msg) {
+    if (!PLATFORM.embedded) return;
+    try { window.parent.postMessage(Object.assign({ protocol: PLATFORM.protocol, trainer: PLATFORM.trainer }, msg), PLATFORM.target); } catch (e) { }
+  }
+  function stageSolved(id) {
+    const def = TR.stageById(id), st = TR.S().stages[id];
+    if (!def || !st) return false;
+    const list = TR.practiceTasks(def);
+    return list.length > 0 && list.every(t => { const ts = st.tasks[t.id]; return !!(ts && ts.ok && !ts.revealed && !ts.peek); });
+  }
+  function stageAttempts(id) {
+    const def = TR.stageById(id), st = TR.S().stages[id] || { tasks: {} };
+    const miss = def ? TR.practiceTasks(def).reduce((n, t) => {
+      const ts = st.tasks[t.id] || {};
+      return n + (ts.miss != null ? ts.miss : Math.max(0, (ts.attempts || 0) - (ts.ok ? 1 : 0)));
+    }, 0) : 0;
+    return Math.min(99, 1 + miss);
+  }
+  function platformReport(id) {
+    if (!PLATFORM.hello || PLATFORM.sent.has(id) || !stageSolved(id)) return;
+    PLATFORM.sent.add(id);
+    platformSend({ kind: 'solved', task: id, attempts: stageAttempts(id), hints: 0 });
+  }
+  function profMark(id) {
+    return PLATFORM.hello && PLATFORM.accepted.has(id) ? '<small class="rt-prof" title="Засчитано в профиль навыков на платформе">✓ в профиле</small>' : '';
+  }
+  function profNote(id) {
+    if (!PLATFORM.hello) return '';
+    if (PLATFORM.accepted.has(id)) return '<div class="small prof-note">✓ Засчитано в профиль навыков на платформе</div>';
+    const def = TR.stageById(id), st = TR.S().stages[id];
+    const peeked = def && st ? TR.practiceTasks(def).filter(t => { const ts = st.tasks[t.id]; return ts && (ts.revealed || ts.peek); }).length : 0;
+    return peeked ? `<div class="small dim">В профиль навыков не ушла: в ${peeked} ${TR.plural(peeked, 'задании', 'заданиях', 'заданиях')} эталон открыт до решения.</div>` : '';
+  }
+  document.head.insertAdjacentHTML('beforeend', '<style>.rt .rt-prof{display:block;margin-top:2px;font:600 10.5px/1.3 var(--f-mono);color:var(--accent)}.outro .prof-note{color:var(--accent);font-weight:600}</style>');
+  window.addEventListener('message', e => {
+    const d = e.data;
+    if (e.source !== window.parent || typeof d !== 'object' || d === null || d.protocol !== PLATFORM.protocol) return;
+    if (d.kind === 'hello') {
+      PLATFORM.hello = true;
+      if (e.origin && e.origin !== 'null') PLATFORM.target = e.origin;
+      (Array.isArray(d.solved) ? d.solved : []).forEach(id => { if (typeof id === 'string') PLATFORM.accepted.add(id); });
+      // решённое вне платформы и ещё не зачтённое — отправить один раз, чтобы прогресс не потерялся
+      TR.stages().forEach(s => { if (!PLATFORM.accepted.has(s.id)) platformReport(s.id); });
+    } else if (d.kind === 'accepted' && typeof d.task === 'string') {
+      PLATFORM.accepted.add(d.task);
+    } else return;
+    if (booted) { drawRoute(); if (current) drawOutro(TR.stageById(current)); }
+  });
+  TR.sub('stage-done', id => platformReport(id));
+  TR.sub('reset', () => PLATFORM.sent.clear());
+  TR.platform = { inProfile: id => PLATFORM.hello && PLATFORM.accepted.has(id), solved: stageSolved, attempts: stageAttempts };
+
   // ---------- старт ----------
   let booted = false;
   function boot() {
@@ -472,6 +537,7 @@
     const h = (location.hash || '').replace(/^#/, '');
     const id = h.startsWith('s-') ? h.slice(2) : '';
     go(TR.stageById(id) ? id : '');
+    platformSend({ kind: 'ready' });
   }
   const start = () => boot();
   if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(start); else start();
