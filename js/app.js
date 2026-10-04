@@ -86,22 +86,23 @@
   // ---------- обложка ----------
   function drawCover() {
     const S = TR.S(), stages = TR.stages();
+    const acts = TR.ACTS.filter(a => stages.some(s => s.act === a.n));
     const started = stages.some(s => TR.stageProgress(s.id).done);
     const next = stages.find(s => !TR.stageState(s.id).done) || stages[0];
     view.innerHTML = `<div class="wrap">
       <section class="hero">
-        <div class="eyebrow">Интерактивный кейс · 4 недели · ${stages.length} тренировок</div>
+        <div class="eyebrow">Интерактивный кейс · ${acts.length} ${TR.plural(acts.length, 'неделя', 'недели', 'недель')} · ${stages.length} ${TR.plural(stages.length, 'тренировка', 'тренировки', 'тренировок')}</div>
         <h1>Сеть «Пульс» растёт.<br>Данные и интеграции — <em>ваши</em>.</h1>
         <svg class="ecg" viewBox="0 0 1000 56" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="ecgGrad" x1="0" x2="1"><stop offset="0" stop-color="#6ee7ff"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#f0abfc"/></linearGradient></defs>
           <path d="M0 30 H170 L182 30 L190 18 L198 30 H260 L272 6 L284 52 L296 30 H420 L430 22 L440 30 H560 L572 4 L586 54 L598 30 H700 L710 20 L720 30 H840 L852 8 L864 50 L876 30 H1000"/></svg>
         <p class="lede">12 фитнес-клубов, через год 25. Сейчас всё в Excel и старой 1С, клиенты записываются по телефону. Директор хочет приложение, онлайн-оплату, проход по QR и партнёра-агрегатора. Схемы нет, требований нет — есть заказчик, ИТ-команда и вы.</p>
       </section>
       <div class="facts3">
-        <div class="fact3"><div class="eyebrow">Задача</div><p>С нуля: выспросить требования, построить <b>три модели данных</b>, решить про <b>репликацию</b>, спроектировать <b>REST</b>, <b>GraphQL</b> и <b>gRPC</b>, пройти все узкие места интеграций.</p></div>
+        <div class="fact3"><div class="eyebrow">Задача</div><p>С нуля: выспросить требования, построить <b>три модели данных</b>, решить про <b>репликацию</b>, спроектировать <b>REST</b>, <b>GraphQL</b> и <b>gRPC</b>, пройти все узкие места интеграций. Потом сеть вырастет: брокеры сообщений, архитектура, надёжность и системный дизайн целиком.</p></div>
         <div class="fact3"><div class="eyebrow">Ставка</div><p><b>Доверие команды</b>: начинаете с 50. Ошибки и подсмотренный эталон его тратят, точные решения возвращают.</p></div>
         <div class="fact3"><div class="eyebrow">Правило</div><p>Решения <b>переносятся</b>. Не спросили про офлайн-турникеты в понедельник — в четверг их не будет в блокноте.</p></div>
       </div>
-      <div class="weeks">${TR.ACTS.map(a => {
+      <div class="weeks">${acts.map(a => {
         const list = stages.filter(s => s.act === a.n), done = list.filter(s => TR.stageState(s.id).done).length;
         return `<div class="week"><div class="eyebrow">${esc(a.title.split(' · ')[0])}</div><h3>${esc(a.title.split(' · ')[1] || a.title)}</h3><p class="small muted">${esc(a.sub)}</p>${ui.meter(list.length ? done / list.length : 0)}<ul>${list.map(s => `<li>${esc(s.title)}</li>`).join('')}</ul></div>`;
       }).join('')}</div>
@@ -132,7 +133,7 @@
         <h1>${esc(def.title)}</h1>
         ${def.when ? `<div class="when">${esc(def.when)}</div>` : ''}
       </div>
-      ${def.intro && def.intro.length ? `<div class="talk">${def.intro.map(x => ui.say(x.who || 'vera', x.html || x.t || '')).join('')}</div>` : ''}
+      ${def.intro && def.intro.length ? `<div class="talk">${def.intro.map(x => ui.say(x.who || 'vera', x.html || x.t || '', { role: x.role || (def.act >= 5 && x.who === 'timur' ? 'CTO «Пульса»' : null) })).join('')}</div>` : ''}
       <section class="part theory"><header class="part-h"><span class="part-n">1</span><div><h2>Теория</h2><p>Что вспомнить перед практикой. Преподаватель проходит это с группой, вы щёлкаете у себя.</p></div></header>
         <div class="stack" data-theory style="gap:18px"></div></section>
       <section class="part practice"><header class="part-h"><span class="part-n">2</span><div><h2>Практика</h2><p>Делаете сами, шаг за шагом: задание → «Проверить» → разбор. Следующее задание открывается после предыдущего.</p></div></header>

@@ -43,7 +43,8 @@
     const p = TR.PEOPLE[pid] || { name: pid, role: '', ini: '?' };
     const me = pid === 'me';
     const av = `<div class="avatar" data-p="${esc(pid)}" aria-hidden="true">${esc(p.ini)}</div>`;
-    const who = opts && opts.noWho ? '' : `<div class="who"><b>${esc(p.name)}</b>${p.role ? ' · ' + esc(p.role) : ''}</div>`;
+    const role = (opts && opts.role) || p.role;
+    const who = opts && opts.noWho ? '' : `<div class="who"><b>${esc(p.name)}</b>${role ? ' · ' + esc(role) : ''}</div>`;
     const b = `<div class="bubble">${who}<div>${html}</div></div>`;
     return `<div class="say ${me ? 'me' : ''} ${esc(pid)}">${me ? b + av : av + b}</div>`;
   };
@@ -278,7 +279,7 @@
     let cur = current || tabs[0].id;
     el.innerHTML = `<div class="stack"><div class="seg" role="tablist">${tabs.map(t => `<button type="button" role="tab" data-tab="${esc(t.id)}" aria-pressed="${t.id === cur}">${t.t}</button>`).join('')}</div><div class="tab-pane"></div></div>`;
     const pane = TR.$('.tab-pane', el);
-    const show = id => { cur = id; TR.$$('[data-tab]', el).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === id))); pane.innerHTML = ''; const t = tabs.find(x => x.id === id); t && t.render(pane); onChange && onChange(id); };
+    const show = id => { cur = id; TR.$$('[data-tab]', el).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === id))); pane.innerHTML = ''; const box = document.createElement('div'); pane.appendChild(box); const t = tabs.find(x => x.id === id); t && t.render(box); onChange && onChange(id); };
     TR.on(el, 'click', '[data-tab]', (e, b) => show(b.dataset.tab));
     show(cur);
     return { show };
