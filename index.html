@@ -482,11 +482,37 @@ svg text { font-family: var(--f-body); }
   .task > header, .task .tbody, .task .tfoot { padding-left: 14px; padding-right: 14px; }
 }
 </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style id="amp-skin">
+/* ── Оформление школы AMP ──────────────────────────────────────────────
+   Тренажёр — часть школы: те же шрифты, цвета и знак, что на ampschool.ru
+   (токены совпадают с apps/web/src/styles.css платформы). Слой только
+   переопределяет переменные; сюжет, вёрстка и смысловые цвета (методы HTTP,
+   подсветка кода, статусы) остаются своими. */
+:root{ --bg:#0b0f14; --surface:#141a22; --surface-2:#1b232d; --surface-3:#232d39; --border:#263140; --border-strong:#3a4757; --text:#e9eef4; --text-2:#a7b4c3; --text-muted:#7d8b9c; --accent:#17d07c; --accent-hover:#35e094; --accent-text:#07130c; --accent-soft:#10281c; --accent-vivid:#17d07c; --accent-glow:rgba(23,208,124,.28); --glow-a:rgba(23,208,124,.10); --glow-b:rgba(116,166,255,.05); --code-bg:#0f141a; --brand:linear-gradient(100deg,#6ee7ff,#17d07c 60%,#a7f3d0); --card-bg:radial-gradient(120% 140% at 100% 0%,rgba(23,208,124,.16),transparent 55%),radial-gradient(90% 120% at 85% 120%,rgba(116,166,255,.12),transparent 60%),linear-gradient(160deg,#16202a,#0d1218 60%); --amp-on-accent:#07130c; color-scheme:dark;
+  --f-body:"Inter",ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif;
+  --f-brand:"Space Grotesk","Inter",ui-sans-serif,system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"Cascadia Code",Consolas,monospace; }
+@media (prefers-color-scheme:light){ :root:not([data-theme="dark"]){ --bg:#f4f6f8; --surface:#ffffff; --surface-2:#eef1f5; --surface-3:#e3e8ee; --border:#dde3ea; --border-strong:#c2cbd6; --text:#0d141c; --text-2:#4a5a6b; --text-muted:#616f7f; --accent:#0a7d46; --accent-hover:#096838; --accent-text:#ffffff; --accent-soft:#dcf5e7; --accent-vivid:#0e9f6e; --accent-glow:rgba(10,125,70,.22); --glow-a:rgba(10,125,70,.07); --glow-b:rgba(26,86,196,.04); --code-bg:#f3f6f9; --brand:linear-gradient(100deg,#0a7d46,#0e9f6e 50%,#1a56c4); --card-bg:radial-gradient(120% 140% at 100% 0%,rgba(10,125,70,.10),transparent 55%),radial-gradient(90% 120% at 85% 120%,rgba(26,86,196,.07),transparent 60%),linear-gradient(160deg,#f7fbf9,#fff 60%); --amp-on-accent:#ffffff; color-scheme:light; } }
+:root[data-theme="light"]{ --bg:#f4f6f8; --surface:#ffffff; --surface-2:#eef1f5; --surface-3:#e3e8ee; --border:#dde3ea; --border-strong:#c2cbd6; --text:#0d141c; --text-2:#4a5a6b; --text-muted:#616f7f; --accent:#0a7d46; --accent-hover:#096838; --accent-text:#ffffff; --accent-soft:#dcf5e7; --accent-vivid:#0e9f6e; --accent-glow:rgba(10,125,70,.22); --glow-a:rgba(10,125,70,.07); --glow-b:rgba(26,86,196,.04); --code-bg:#f3f6f9; --brand:linear-gradient(100deg,#0a7d46,#0e9f6e 50%,#1a56c4); --card-bg:radial-gradient(120% 140% at 100% 0%,rgba(10,125,70,.10),transparent 55%),radial-gradient(90% 120% at 85% 120%,rgba(26,86,196,.07),transparent 60%),linear-gradient(160deg,#f7fbf9,#fff 60%); --amp-on-accent:#ffffff; color-scheme:light; }
+:root[data-theme="dark"]{ --bg:#0b0f14; --surface:#141a22; --surface-2:#1b232d; --surface-3:#232d39; --border:#263140; --border-strong:#3a4757; --text:#e9eef4; --text-2:#a7b4c3; --text-muted:#7d8b9c; --accent:#17d07c; --accent-hover:#35e094; --accent-text:#07130c; --accent-soft:#10281c; --accent-vivid:#17d07c; --accent-glow:rgba(23,208,124,.28); --glow-a:rgba(23,208,124,.10); --glow-b:rgba(116,166,255,.05); --code-bg:#0f141a; --brand:linear-gradient(100deg,#6ee7ff,#17d07c 60%,#a7f3d0); --card-bg:radial-gradient(120% 140% at 100% 0%,rgba(23,208,124,.16),transparent 55%),radial-gradient(90% 120% at 85% 120%,rgba(116,166,255,.12),transparent 60%),linear-gradient(160deg,#16202a,#0d1218 60%); --amp-on-accent:#07130c; color-scheme:dark; }
+:focus-visible{outline-color:var(--accent)}
+/* Волна под заголовком обложки: цвета зашиты в разметку — красим здесь. */
+.swoosh stop{stop-color:var(--accent)}
+/* Знак школы рядом со знаком тренажёра; внутри платформы (в рамке) не нужен. */
+.amp-mark{flex:none; display:inline-grid; place-items:center; width:30px; height:30px; border-radius:8px; background:var(--accent); color:var(--amp-on-accent); font:700 10px/1 var(--f-brand); letter-spacing:.02em; text-decoration:none}
+.amp-mark:hover{filter:brightness(1.08)}
+.amp-mark:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+html.amp-embedded .amp-mark{display:none}
+@media (max-width:560px){ .amp-mark{display:none} }
+</style>
+<script>try{if(window.self!==window.top)document.documentElement.classList.add("amp-embedded")}catch(e){document.documentElement.classList.add("amp-embedded")}</script>
 </head>
 <body>
 <div class="app" id="app">
   <header class="topbar">
     <button class="tb-btn menu-btn" type="button" id="menuBtn" aria-label="Программа">☰</button>
+    <a class="amp-mark" href="https://ampschool.ru/practice" title="Школа AMP — все тренажёры" aria-label="Школа AMP — все тренажёры">AMP</a>
     <button class="brand" type="button" id="homeBtn" aria-label="На обложку">
       <svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6ee7ff"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#f0abfc"/></linearGradient></defs><rect width="32" height="32" rx="8" fill="url(#lg)"/><path d="M5 17 H11 L13.5 11 L17 23 L20 14 L21.5 17 H27" stroke="#0b0f14" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <span class="prod"><b>Пульс</b><small>тренажёр данных и интеграций</small></span>
